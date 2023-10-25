@@ -4,7 +4,8 @@ import { useSelector,useDispatch } from 'react-redux';
 import { getDownloadURL, getStorage,ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
 import { updateUserStart , updateUserSuccess, updateUserFailure ,
-deleteUserFailure,deleteUserStart,deleteUserSuccess} from '../redux/user/userSlice';
+deleteUserFailure,deleteUserStart,deleteUserSuccess,
+signOutUserStart,signOutUserSuccess,signOutUserFailure} from '../redux/user/userSlice';
 
 
 function Profile() {
@@ -101,6 +102,22 @@ function Profile() {
     catch (error) {
     dispatch(deleteUserFailure(error.message))
     }
+  };
+
+  const handleSignOut= async()=>{
+    try{
+      dispatch(signOutUserStart())
+  const res=await fetch('api/auth/signout');
+  const data=await res.json();
+  if(data.success=== false){
+    dispatch(signOutUserFailure(data.message));
+    return;
+  }
+  dispatch(signOutUserSuccess(data));
+    }
+    catch (error){
+   dispatch(signOutUserFailure(data.message));
+    }
   }
 
   return (
@@ -166,7 +183,8 @@ function Profile() {
       <div className='flex justify-between mt-5'>
      <span onClick={handleDeleteUser}
       className='text-red-700 cursor-pointer hover:opacity-75'>Delete account</span>
-     <span className='text-red-700 cursor-pointer hover:opacity-75'>Sign out</span>
+     <span onClick={handleSignOut}
+      className='text-red-700 cursor-pointer hover:opacity-75'>Sign out</span>
       </div>
 
       <p className='text-red-700 mt-5'>{error ? error : ""} </p>

@@ -1,12 +1,13 @@
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import {app} from '../firebase';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams } from 'react-router-dom';
 
 export default function CreateListing() {
-    const navigate=useNavigate()
+    const navigate=useNavigate();
+    const params=useParams();
    const {currentUser} =useSelector(state=>state.user)
     const [files,setFiles]=useState([]);
    // console.log(files)
@@ -24,16 +25,32 @@ export default function CreateListing() {
     parking:false,
     furnished:false,
    });
-  console.log(formData)
+ // console.log(formData)
 
   const [imageUploadError,setImageUploadError]=useState(false);
   const [uploading,setUploading]=useState(false);
   const [error,setError]=useState(false);
   const [loading,setLoading]=useState(false);
 
+   useEffect(()=>{
+    const fetchListing= async ()=>{
+     const listingId=params.listingId;
+    // console.log(listingId);
+    const res= await fetch(`/api/listing/get/${listingId}`);
+    const data= await res.json();
+
+    if(data.success === false){
+        console.log(data.message);
+        return;
+    }
+    setFormData(data);
+    };
+    
+    fetchListing();
+   },[]);
 
    const handleImageSubmit=(e)=>{
-   if(files.length>0 && files.length+formData.imageUrls.length<7){
+   if(files.length > 0 && files.length + formData.imageUrls.length < 7){
     setUploading(true);
     setImageUploadError(false);
     const promises=[];
@@ -124,7 +141,7 @@ export default function CreateListing() {
             setLoading(true);
             setError(false);
 
-            const res= await fetch('/api/listing/create',{
+            const res= await fetch(`/api/listing/update/${params.listingId}`,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json',
@@ -152,7 +169,7 @@ export default function CreateListing() {
   return (
    <main className='p-3 max-w-4xl mx-auto'>
     <h1 className='text-3xl font-semibold text-center my-7'>
-        Create a Listing
+        Update a Listing
     </h1>
 
     <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
@@ -314,7 +331,7 @@ export default function CreateListing() {
 
             <p className='text-red-700 text-sm'>{imageUploadError && imageUploadError}</p>
            {
-            formData.imageUrls.length>0 && formData.imageUrls.map((url,index)=>(
+            formData.imageUrls.length > 0 && formData.imageUrls.map((url,index)=>(
               <div key={url} className='flex justify-between p-3 border items-center '>
                 <img src={url} alt="listing image" className='w-20 h-20 object-contain rounded-lg' />
                 <button type='button' onClick={()=>handleRemoveImage(index)}
@@ -328,7 +345,7 @@ export default function CreateListing() {
              className='p-3 bg-slate-700
         text-white rounded-lg uppercase
         hover:opacity-95 disabled:opacity-80'>
-            {loading ? 'Creating...': 'Create Listing'}
+            {loading ? 'Creating...': 'Update Listing'}
             </button>
             {error && <p className='text-red-700 text-sm'>{error}</p>}
         </div>
@@ -338,6 +355,4 @@ export default function CreateListing() {
   
 </main>
   )}
-
-
 

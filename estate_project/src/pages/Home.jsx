@@ -8,28 +8,28 @@ import ListingItem from '../components/ListingItem';
 
 function Home() {
 
-  const [offerListings,setOfferListings]=useState([]);
-  const [saleListings,setSaleListings]=useState([]);
-  const [rentListings,setRentListings]=useState([]);
+  const [offerListings, setOfferListings] = useState([]);
+  const [saleListings, setSaleListings] = useState([]);
+  const [rentListings, setRentListings] = useState([]);
 
   SwiperCore.use([Navigation]);
 
- // console.log(saleListings)
+  // console.log(saleListings)
 
-  useEffect(()=>{
-    const fetchOfferListings= async()=>{
-    try{
-   const res=await fetch('api/listing/get?offer=true&limit=4');
-   const data= await res.json();
-   setOfferListings(data);
-   fetchRentListings();
-    }
-    catch(error){
-      console.log(error);
-    }
+  useEffect(() => {
+    const fetchOfferListings = async () => {
+      try {
+        const res = await fetch('api/listing/get?offer=true&limit=4');
+        const data = await res.json();
+        setOfferListings(data);
+        fetchRentListings();
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
 
-    const fetchRentListings= async()=>{
+    const fetchRentListings = async () => {
       try {
         const res = await fetch('/api/listing/get?type=rent&limit=4');
         const data = await res.json();
@@ -51,30 +51,30 @@ function Home() {
     };
 
     fetchOfferListings();
-  },[]);
+  }, []);
   return (
-  <div>
-    {/* top */}
-     <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto'>
-      <h1 className='text-slate-700 font-bold text-3xl lg:text-6xl'>
-        Find your next <span className='text-slate-500'>perfect</span>
-        <br />
-       place with ease</h1>
+    <div>
+      {/* top */}
+      <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto'>
+        <h1 className='text-slate-700 font-bold text-3xl lg:text-6xl'>
+          Find your next <span className='text-slate-500'>perfect</span>
+          <br />
+          place with ease</h1>
         <div className='text-gray-400 text-xs sm:text-sm '>
-          Bhagat Estate is the best place to find your next perfect
+          Nest Bids is the best place to find your next perfect
           place to live.
-          <br/>
+          <br />
           We have a wide range of properties for you to choose from.
         </div>
-      <Link to ={"/search"} className='text-xs sm:text-sm text-blue-800 font-bold hover:underline'>
-        Let's get started...
-      </Link>
-     </div>
+        <Link to={"/search"} className='text-xs sm:text-sm text-blue-800 font-bold hover:underline'>
+          Let's get started...
+        </Link>
+      </div>
 
 
-    {/* swiper */}
-   
-    <Swiper navigation>
+      {/* swiper */}
+
+      <Swiper navigation>
         {offerListings &&
           offerListings.length > 0 &&
           offerListings.map((listing) => (
@@ -92,9 +92,9 @@ function Home() {
       </Swiper>
 
 
-    {/* listing results for offer,sale and rent */}
+      {/* listing results for offer,sale and rent */}
 
-    <div className='max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10'>
+      <div className='max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10'>
         {offerListings && offerListings.length > 0 && (
           <div className=''>
             <div className='my-3'>
@@ -136,7 +136,7 @@ function Home() {
         )}
       </div>
 
-  </div>
+    </div>
   )
 }
 
